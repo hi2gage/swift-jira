@@ -12,7 +12,7 @@ filter:
     - "/rest/api/3/jql/autocompletedata"
 #    - "/rest/api/3/application-properties"
 #    - "/rest/api/3/configuration"
-#    - "/rest/api/3/issue"
+    - "/rest/api/3/issue"
 #    - "/rest/api/3/issueType"
 #    - "/rest/api/3/worklog"
 #    - "/rest/api/3/search"

@@ -39,6 +39,24 @@ public protocol APIProtocol: Sendable {
     /// - Remark: HTTP `POST /rest/api/3/bulk/issues/fields`.
     /// - Remark: Generated from `#/paths//rest/api/3/bulk/issues/fields/post(submitBulkEdit)`.
     func submitBulkEdit(_ input: Operations.submitBulkEdit.Input) async throws -> Operations.submitBulkEdit.Output
+    /// Create issue
+    ///
+    /// Creates an issue or, where the option to create subtasks is enabled in Jira, a subtask. A transition may be applied, to move the issue or subtask to a workflow step other than the default start step, and issue properties set.
+    ///
+    /// The content of the issue or subtask is defined using `update` and `fields`. The fields that can be set in the issue or subtask are determined using the [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get). These are the same fields that appear on the issue's create screen. Note that the `description`, `environment`, and any `textarea` type custom fields (multi-line text fields) take Atlassian Document Format content. Single line custom fields (`textfield`) accept a string and don't handle Atlassian Document Format content.
+    ///
+    /// Creating a subtask differs from creating an issue as follows:
+    ///
+    ///  *  `issueType` must be set to a subtask issue type (use [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get) to find subtask issue types).
+    ///  *  `parent` must contain the ID or key of the parent issue.
+    ///
+    /// In a next-gen project any issue may be made a child providing that the parent and child are members of the same project.
+    ///
+    /// **[Permissions](#permissions) required:** *Browse projects* and *Create issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project in which the issue or subtask is created.
+    ///
+    /// - Remark: HTTP `POST /rest/api/3/issue`.
+    /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)`.
+    func createIssue(_ input: Operations.createIssue.Input) async throws -> Operations.createIssue.Output
     /// Get field reference data (GET)
     ///
     /// Returns reference data for JQL searches. This is a downloadable version of the documentation provided in [Advanced searching - fields reference](https://confluence.atlassian.com/x/gwORLQ) and [Advanced searching - functions reference](https://confluence.atlassian.com/x/hgORLQ), along with a list of JQL-reserved words. Use this information to assist with the programmatic creation of JQL queries or the validation of queries built in a custom query builder.
@@ -260,6 +278,34 @@ extension APIProtocol {
         body: Operations.submitBulkEdit.Input.Body
     ) async throws -> Operations.submitBulkEdit.Output {
         try await submitBulkEdit(Operations.submitBulkEdit.Input(
+            headers: headers,
+            body: body
+        ))
+    }
+    /// Create issue
+    ///
+    /// Creates an issue or, where the option to create subtasks is enabled in Jira, a subtask. A transition may be applied, to move the issue or subtask to a workflow step other than the default start step, and issue properties set.
+    ///
+    /// The content of the issue or subtask is defined using `update` and `fields`. The fields that can be set in the issue or subtask are determined using the [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get). These are the same fields that appear on the issue's create screen. Note that the `description`, `environment`, and any `textarea` type custom fields (multi-line text fields) take Atlassian Document Format content. Single line custom fields (`textfield`) accept a string and don't handle Atlassian Document Format content.
+    ///
+    /// Creating a subtask differs from creating an issue as follows:
+    ///
+    ///  *  `issueType` must be set to a subtask issue type (use [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get) to find subtask issue types).
+    ///  *  `parent` must contain the ID or key of the parent issue.
+    ///
+    /// In a next-gen project any issue may be made a child providing that the parent and child are members of the same project.
+    ///
+    /// **[Permissions](#permissions) required:** *Browse projects* and *Create issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project in which the issue or subtask is created.
+    ///
+    /// - Remark: HTTP `POST /rest/api/3/issue`.
+    /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)`.
+    public func createIssue(
+        query: Operations.createIssue.Input.Query = .init(),
+        headers: Operations.createIssue.Input.Headers = .init(),
+        body: Operations.createIssue.Input.Body
+    ) async throws -> Operations.createIssue.Output {
+        try await createIssue(Operations.createIssue.Input(
+            query: query,
             headers: headers,
             body: body
         ))
@@ -1317,6 +1363,248 @@ public enum Components {
                 ])
             }
         }
+        /// Details about a created issue or subtask.
+        ///
+        /// - Remark: Generated from `#/components/schemas/CreatedIssue`.
+        public struct CreatedIssue: Codable, Hashable, Sendable {
+            /// The ID of the created issue or subtask.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreatedIssue/id`.
+            public var id: Swift.String?
+            /// The key of the created issue or subtask.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreatedIssue/key`.
+            public var key: Swift.String?
+            /// The URL of the created issue or subtask.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreatedIssue/self`.
+            public var _self: Swift.String?
+            /// The response code and messages related to any requested transition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreatedIssue/transition`.
+            public struct transitionPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/CreatedIssue/transition/value1`.
+                public var value1: Components.Schemas.NestedResponse
+                /// Creates a new `transitionPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.NestedResponse) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// The response code and messages related to any requested transition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreatedIssue/transition`.
+            public var transition: Components.Schemas.CreatedIssue.transitionPayload?
+            /// The response code and messages related to any requested watchers.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreatedIssue/watchers`.
+            public struct watchersPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/CreatedIssue/watchers/value1`.
+                public var value1: Components.Schemas.NestedResponse
+                /// Creates a new `watchersPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.NestedResponse) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// The response code and messages related to any requested watchers.
+            ///
+            /// - Remark: Generated from `#/components/schemas/CreatedIssue/watchers`.
+            public var watchers: Components.Schemas.CreatedIssue.watchersPayload?
+            /// Creates a new `CreatedIssue`.
+            ///
+            /// - Parameters:
+            ///   - id: The ID of the created issue or subtask.
+            ///   - key: The key of the created issue or subtask.
+            ///   - _self: The URL of the created issue or subtask.
+            ///   - transition: The response code and messages related to any requested transition.
+            ///   - watchers: The response code and messages related to any requested watchers.
+            public init(
+                id: Swift.String? = nil,
+                key: Swift.String? = nil,
+                _self: Swift.String? = nil,
+                transition: Components.Schemas.CreatedIssue.transitionPayload? = nil,
+                watchers: Components.Schemas.CreatedIssue.watchersPayload? = nil
+            ) {
+                self.id = id
+                self.key = key
+                self._self = _self
+                self.transition = transition
+                self.watchers = watchers
+            }
+            public enum CodingKeys: String, CodingKey {
+                case id
+                case key
+                case _self = "self"
+                case transition
+                case watchers
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                id = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .id
+                )
+                key = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .key
+                )
+                _self = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: ._self
+                )
+                transition = try container.decodeIfPresent(
+                    Components.Schemas.CreatedIssue.transitionPayload.self,
+                    forKey: .transition
+                )
+                watchers = try container.decodeIfPresent(
+                    Components.Schemas.CreatedIssue.watchersPayload.self,
+                    forKey: .watchers
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "id",
+                    "key",
+                    "self",
+                    "transition",
+                    "watchers"
+                ])
+            }
+        }
+        /// An entity property, for more information see [Entity properties](https://developer.atlassian.com/cloud/jira/platform/jira-entity-properties/).
+        ///
+        /// - Remark: Generated from `#/components/schemas/EntityProperty`.
+        public struct EntityProperty: Codable, Hashable, Sendable {
+            /// The key of the property. Required on create and update.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EntityProperty/key`.
+            public var key: Swift.String?
+            /// The value of the property. Required on create and update.
+            ///
+            /// - Remark: Generated from `#/components/schemas/EntityProperty/value`.
+            public var value: OpenAPIRuntime.OpenAPIValueContainer?
+            /// Creates a new `EntityProperty`.
+            ///
+            /// - Parameters:
+            ///   - key: The key of the property. Required on create and update.
+            ///   - value: The value of the property. Required on create and update.
+            public init(
+                key: Swift.String? = nil,
+                value: OpenAPIRuntime.OpenAPIValueContainer? = nil
+            ) {
+                self.key = key
+                self.value = value
+            }
+            public enum CodingKeys: String, CodingKey {
+                case key
+                case value
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                key = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .key
+                )
+                value = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIValueContainer.self,
+                    forKey: .value
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "key",
+                    "value"
+                ])
+            }
+        }
+        /// Error messages from an operation.
+        ///
+        /// - Remark: Generated from `#/components/schemas/ErrorCollection`.
+        public struct ErrorCollection: Codable, Hashable, Sendable {
+            /// The list of error messages produced by this operation. For example, "input parameter 'key' must be provided"
+            ///
+            /// - Remark: Generated from `#/components/schemas/ErrorCollection/errorMessages`.
+            public var errorMessages: [Swift.String]?
+            /// The list of errors by parameter returned by the operation. For example,"projectKey": "Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters."
+            ///
+            /// - Remark: Generated from `#/components/schemas/ErrorCollection/errors`.
+            public struct errorsPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: Swift.String]
+                /// Creates a new `errorsPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: Swift.String] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// The list of errors by parameter returned by the operation. For example,"projectKey": "Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters."
+            ///
+            /// - Remark: Generated from `#/components/schemas/ErrorCollection/errors`.
+            public var errors: Components.Schemas.ErrorCollection.errorsPayload?
+            /// - Remark: Generated from `#/components/schemas/ErrorCollection/status`.
+            public var status: Swift.Int32?
+            /// Creates a new `ErrorCollection`.
+            ///
+            /// - Parameters:
+            ///   - errorMessages: The list of error messages produced by this operation. For example, "input parameter 'key' must be provided"
+            ///   - errors: The list of errors by parameter returned by the operation. For example,"projectKey": "Project keys must start with an uppercase letter, followed by one or more uppercase alphanumeric characters."
+            ///   - status:
+            public init(
+                errorMessages: [Swift.String]? = nil,
+                errors: Components.Schemas.ErrorCollection.errorsPayload? = nil,
+                status: Swift.Int32? = nil
+            ) {
+                self.errorMessages = errorMessages
+                self.errors = errors
+                self.status = status
+            }
+            public enum CodingKeys: String, CodingKey {
+                case errorMessages
+                case errors
+                case status
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                errorMessages = try container.decodeIfPresent(
+                    [Swift.String].self,
+                    forKey: .errorMessages
+                )
+                errors = try container.decodeIfPresent(
+                    Components.Schemas.ErrorCollection.errorsPayload.self,
+                    forKey: .errors
+                )
+                status = try container.decodeIfPresent(
+                    Swift.Int32.self,
+                    forKey: .status
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "errorMessages",
+                    "errors",
+                    "status"
+                ])
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/ErrorMessage`.
         public struct ErrorMessage: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/ErrorMessage/message`.
@@ -1339,6 +1627,194 @@ public enum Components {
                 )
                 try decoder.ensureNoAdditionalProperties(knownKeys: [
                     "message"
+                ])
+            }
+        }
+        /// The metadata describing an issue field.
+        ///
+        /// - Remark: Generated from `#/components/schemas/FieldMetadata`.
+        public struct FieldMetadata: Codable, Hashable, Sendable {
+            /// The list of values allowed in the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/allowedValues`.
+            public var allowedValues: [OpenAPIRuntime.OpenAPIValueContainer]?
+            /// The URL that can be used to automatically complete the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/autoCompleteUrl`.
+            public var autoCompleteUrl: Swift.String?
+            /// The configuration properties.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/configuration`.
+            public struct configurationPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: OpenAPIRuntime.OpenAPIValueContainer]
+                /// Creates a new `configurationPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: OpenAPIRuntime.OpenAPIValueContainer] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// The configuration properties.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/configuration`.
+            public var configuration: Components.Schemas.FieldMetadata.configurationPayload?
+            /// The default value of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/defaultValue`.
+            public var defaultValue: OpenAPIRuntime.OpenAPIValueContainer?
+            /// Whether the field has a default value.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/hasDefaultValue`.
+            public var hasDefaultValue: Swift.Bool?
+            /// The key of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/key`.
+            public var key: Swift.String
+            /// The name of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/name`.
+            public var name: Swift.String
+            /// The list of operations that can be performed on the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/operations`.
+            public var operations: [Swift.String]
+            /// Whether the field is required.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/required`.
+            public var required: Swift.Bool
+            /// The data type of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/schema`.
+            public struct schemaPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/FieldMetadata/schema/value1`.
+                public var value1: Components.Schemas.JsonTypeBean
+                /// Creates a new `schemaPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.JsonTypeBean) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// The data type of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldMetadata/schema`.
+            public var schema: Components.Schemas.FieldMetadata.schemaPayload
+            /// Creates a new `FieldMetadata`.
+            ///
+            /// - Parameters:
+            ///   - allowedValues: The list of values allowed in the field.
+            ///   - autoCompleteUrl: The URL that can be used to automatically complete the field.
+            ///   - configuration: The configuration properties.
+            ///   - defaultValue: The default value of the field.
+            ///   - hasDefaultValue: Whether the field has a default value.
+            ///   - key: The key of the field.
+            ///   - name: The name of the field.
+            ///   - operations: The list of operations that can be performed on the field.
+            ///   - required: Whether the field is required.
+            ///   - schema: The data type of the field.
+            public init(
+                allowedValues: [OpenAPIRuntime.OpenAPIValueContainer]? = nil,
+                autoCompleteUrl: Swift.String? = nil,
+                configuration: Components.Schemas.FieldMetadata.configurationPayload? = nil,
+                defaultValue: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                hasDefaultValue: Swift.Bool? = nil,
+                key: Swift.String,
+                name: Swift.String,
+                operations: [Swift.String],
+                required: Swift.Bool,
+                schema: Components.Schemas.FieldMetadata.schemaPayload
+            ) {
+                self.allowedValues = allowedValues
+                self.autoCompleteUrl = autoCompleteUrl
+                self.configuration = configuration
+                self.defaultValue = defaultValue
+                self.hasDefaultValue = hasDefaultValue
+                self.key = key
+                self.name = name
+                self.operations = operations
+                self.required = required
+                self.schema = schema
+            }
+            public enum CodingKeys: String, CodingKey {
+                case allowedValues
+                case autoCompleteUrl
+                case configuration
+                case defaultValue
+                case hasDefaultValue
+                case key
+                case name
+                case operations
+                case required
+                case schema
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                allowedValues = try container.decodeIfPresent(
+                    [OpenAPIRuntime.OpenAPIValueContainer].self,
+                    forKey: .allowedValues
+                )
+                autoCompleteUrl = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .autoCompleteUrl
+                )
+                configuration = try container.decodeIfPresent(
+                    Components.Schemas.FieldMetadata.configurationPayload.self,
+                    forKey: .configuration
+                )
+                defaultValue = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIValueContainer.self,
+                    forKey: .defaultValue
+                )
+                hasDefaultValue = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .hasDefaultValue
+                )
+                key = try container.decode(
+                    Swift.String.self,
+                    forKey: .key
+                )
+                name = try container.decode(
+                    Swift.String.self,
+                    forKey: .name
+                )
+                operations = try container.decode(
+                    [Swift.String].self,
+                    forKey: .operations
+                )
+                required = try container.decode(
+                    Swift.Bool.self,
+                    forKey: .required
+                )
+                schema = try container.decode(
+                    Components.Schemas.FieldMetadata.schemaPayload.self,
+                    forKey: .schema
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "allowedValues",
+                    "autoCompleteUrl",
+                    "configuration",
+                    "defaultValue",
+                    "hasDefaultValue",
+                    "key",
+                    "name",
+                    "operations",
+                    "required",
+                    "schema"
                 ])
             }
         }
@@ -1519,6 +1995,89 @@ public enum Components {
                     "searchable",
                     "types",
                     "value"
+                ])
+            }
+        }
+        /// Details of an operation to perform on a field.
+        ///
+        /// - Remark: Generated from `#/components/schemas/FieldUpdateOperation`.
+        public struct FieldUpdateOperation: Codable, Hashable, Sendable {
+            /// The value to add to the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldUpdateOperation/add`.
+            public var add: OpenAPIRuntime.OpenAPIValueContainer?
+            /// The field value to copy from another issue.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldUpdateOperation/copy`.
+            public var copy: OpenAPIRuntime.OpenAPIValueContainer?
+            /// The value to edit in the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldUpdateOperation/edit`.
+            public var edit: OpenAPIRuntime.OpenAPIValueContainer?
+            /// The value to removed from the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldUpdateOperation/remove`.
+            public var remove: OpenAPIRuntime.OpenAPIValueContainer?
+            /// The value to set in the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/FieldUpdateOperation/set`.
+            public var set: OpenAPIRuntime.OpenAPIValueContainer?
+            /// Creates a new `FieldUpdateOperation`.
+            ///
+            /// - Parameters:
+            ///   - add: The value to add to the field.
+            ///   - copy: The field value to copy from another issue.
+            ///   - edit: The value to edit in the field.
+            ///   - remove: The value to removed from the field.
+            ///   - set: The value to set in the field.
+            public init(
+                add: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                copy: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                edit: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                remove: OpenAPIRuntime.OpenAPIValueContainer? = nil,
+                set: OpenAPIRuntime.OpenAPIValueContainer? = nil
+            ) {
+                self.add = add
+                self.copy = copy
+                self.edit = edit
+                self.remove = remove
+                self.set = set
+            }
+            public enum CodingKeys: String, CodingKey {
+                case add
+                case copy
+                case edit
+                case remove
+                case set
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                add = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIValueContainer.self,
+                    forKey: .add
+                )
+                copy = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIValueContainer.self,
+                    forKey: .copy
+                )
+                edit = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIValueContainer.self,
+                    forKey: .edit
+                )
+                remove = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIValueContainer.self,
+                    forKey: .remove
+                )
+                set = try container.decodeIfPresent(
+                    OpenAPIRuntime.OpenAPIValueContainer.self,
+                    forKey: .set
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "add",
+                    "copy",
+                    "edit",
+                    "remove",
+                    "set"
                 ])
             }
         }
@@ -1718,6 +2277,429 @@ public enum Components {
                     "baseLevelId",
                     "levels"
                 ])
+            }
+        }
+        /// Details of issue history metadata.
+        ///
+        /// - Remark: Generated from `#/components/schemas/HistoryMetadata`.
+        public struct HistoryMetadata: Codable, Hashable, Sendable {
+            /// The activity described in the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/activityDescription`.
+            public var activityDescription: Swift.String?
+            /// The key of the activity described in the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/activityDescriptionKey`.
+            public var activityDescriptionKey: Swift.String?
+            /// Details of the user whose action created the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/actor`.
+            public struct actorPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/HistoryMetadata/actor/value1`.
+                public var value1: Components.Schemas.HistoryMetadataParticipant
+                /// Creates a new `actorPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.HistoryMetadataParticipant) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// Details of the user whose action created the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/actor`.
+            public var actor: Components.Schemas.HistoryMetadata.actorPayload?
+            /// Details of the cause that triggered the creation the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/cause`.
+            public struct causePayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/HistoryMetadata/cause/value1`.
+                public var value1: Components.Schemas.HistoryMetadataParticipant
+                /// Creates a new `causePayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.HistoryMetadataParticipant) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// Details of the cause that triggered the creation the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/cause`.
+            public var cause: Components.Schemas.HistoryMetadata.causePayload?
+            /// The description of the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/description`.
+            public var description: Swift.String?
+            /// The description key of the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/descriptionKey`.
+            public var descriptionKey: Swift.String?
+            /// The description of the email address associated the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/emailDescription`.
+            public var emailDescription: Swift.String?
+            /// The description key of the email address associated the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/emailDescriptionKey`.
+            public var emailDescriptionKey: Swift.String?
+            /// Additional arbitrary information about the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/extraData`.
+            public struct extraDataPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: Swift.String]
+                /// Creates a new `extraDataPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: Swift.String] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// Additional arbitrary information about the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/extraData`.
+            public var extraData: Components.Schemas.HistoryMetadata.extraDataPayload?
+            /// Details of the system that generated the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/generator`.
+            public struct generatorPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/HistoryMetadata/generator/value1`.
+                public var value1: Components.Schemas.HistoryMetadataParticipant
+                /// Creates a new `generatorPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.HistoryMetadataParticipant) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// Details of the system that generated the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/generator`.
+            public var generator: Components.Schemas.HistoryMetadata.generatorPayload?
+            /// The type of the history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadata/type`.
+            public var _type: Swift.String?
+            /// A container of undocumented properties.
+            public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `HistoryMetadata`.
+            ///
+            /// - Parameters:
+            ///   - activityDescription: The activity described in the history record.
+            ///   - activityDescriptionKey: The key of the activity described in the history record.
+            ///   - actor: Details of the user whose action created the history record.
+            ///   - cause: Details of the cause that triggered the creation the history record.
+            ///   - description: The description of the history record.
+            ///   - descriptionKey: The description key of the history record.
+            ///   - emailDescription: The description of the email address associated the history record.
+            ///   - emailDescriptionKey: The description key of the email address associated the history record.
+            ///   - extraData: Additional arbitrary information about the history record.
+            ///   - generator: Details of the system that generated the history record.
+            ///   - _type: The type of the history record.
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(
+                activityDescription: Swift.String? = nil,
+                activityDescriptionKey: Swift.String? = nil,
+                actor: Components.Schemas.HistoryMetadata.actorPayload? = nil,
+                cause: Components.Schemas.HistoryMetadata.causePayload? = nil,
+                description: Swift.String? = nil,
+                descriptionKey: Swift.String? = nil,
+                emailDescription: Swift.String? = nil,
+                emailDescriptionKey: Swift.String? = nil,
+                extraData: Components.Schemas.HistoryMetadata.extraDataPayload? = nil,
+                generator: Components.Schemas.HistoryMetadata.generatorPayload? = nil,
+                _type: Swift.String? = nil,
+                additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()
+            ) {
+                self.activityDescription = activityDescription
+                self.activityDescriptionKey = activityDescriptionKey
+                self.actor = actor
+                self.cause = cause
+                self.description = description
+                self.descriptionKey = descriptionKey
+                self.emailDescription = emailDescription
+                self.emailDescriptionKey = emailDescriptionKey
+                self.extraData = extraData
+                self.generator = generator
+                self._type = _type
+                self.additionalProperties = additionalProperties
+            }
+            public enum CodingKeys: String, CodingKey {
+                case activityDescription
+                case activityDescriptionKey
+                case actor
+                case cause
+                case description
+                case descriptionKey
+                case emailDescription
+                case emailDescriptionKey
+                case extraData
+                case generator
+                case _type = "type"
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                activityDescription = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .activityDescription
+                )
+                activityDescriptionKey = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .activityDescriptionKey
+                )
+                actor = try container.decodeIfPresent(
+                    Components.Schemas.HistoryMetadata.actorPayload.self,
+                    forKey: .actor
+                )
+                cause = try container.decodeIfPresent(
+                    Components.Schemas.HistoryMetadata.causePayload.self,
+                    forKey: .cause
+                )
+                description = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .description
+                )
+                descriptionKey = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .descriptionKey
+                )
+                emailDescription = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .emailDescription
+                )
+                emailDescriptionKey = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .emailDescriptionKey
+                )
+                extraData = try container.decodeIfPresent(
+                    Components.Schemas.HistoryMetadata.extraDataPayload.self,
+                    forKey: .extraData
+                )
+                generator = try container.decodeIfPresent(
+                    Components.Schemas.HistoryMetadata.generatorPayload.self,
+                    forKey: .generator
+                )
+                _type = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: ._type
+                )
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [
+                    "activityDescription",
+                    "activityDescriptionKey",
+                    "actor",
+                    "cause",
+                    "description",
+                    "descriptionKey",
+                    "emailDescription",
+                    "emailDescriptionKey",
+                    "extraData",
+                    "generator",
+                    "type"
+                ])
+            }
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encodeIfPresent(
+                    activityDescription,
+                    forKey: .activityDescription
+                )
+                try container.encodeIfPresent(
+                    activityDescriptionKey,
+                    forKey: .activityDescriptionKey
+                )
+                try container.encodeIfPresent(
+                    actor,
+                    forKey: .actor
+                )
+                try container.encodeIfPresent(
+                    cause,
+                    forKey: .cause
+                )
+                try container.encodeIfPresent(
+                    description,
+                    forKey: .description
+                )
+                try container.encodeIfPresent(
+                    descriptionKey,
+                    forKey: .descriptionKey
+                )
+                try container.encodeIfPresent(
+                    emailDescription,
+                    forKey: .emailDescription
+                )
+                try container.encodeIfPresent(
+                    emailDescriptionKey,
+                    forKey: .emailDescriptionKey
+                )
+                try container.encodeIfPresent(
+                    extraData,
+                    forKey: .extraData
+                )
+                try container.encodeIfPresent(
+                    generator,
+                    forKey: .generator
+                )
+                try container.encodeIfPresent(
+                    _type,
+                    forKey: ._type
+                )
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+        /// Details of user or system associated with a issue history metadata item.
+        ///
+        /// - Remark: Generated from `#/components/schemas/HistoryMetadataParticipant`.
+        public struct HistoryMetadataParticipant: Codable, Hashable, Sendable {
+            /// The URL to an avatar for the user or system associated with a history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadataParticipant/avatarUrl`.
+            public var avatarUrl: Swift.String?
+            /// The display name of the user or system associated with a history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadataParticipant/displayName`.
+            public var displayName: Swift.String?
+            /// The key of the display name of the user or system associated with a history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadataParticipant/displayNameKey`.
+            public var displayNameKey: Swift.String?
+            /// The ID of the user or system associated with a history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadataParticipant/id`.
+            public var id: Swift.String?
+            /// The type of the user or system associated with a history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadataParticipant/type`.
+            public var _type: Swift.String?
+            /// The URL of the user or system associated with a history record.
+            ///
+            /// - Remark: Generated from `#/components/schemas/HistoryMetadataParticipant/url`.
+            public var url: Swift.String?
+            /// A container of undocumented properties.
+            public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `HistoryMetadataParticipant`.
+            ///
+            /// - Parameters:
+            ///   - avatarUrl: The URL to an avatar for the user or system associated with a history record.
+            ///   - displayName: The display name of the user or system associated with a history record.
+            ///   - displayNameKey: The key of the display name of the user or system associated with a history record.
+            ///   - id: The ID of the user or system associated with a history record.
+            ///   - _type: The type of the user or system associated with a history record.
+            ///   - url: The URL of the user or system associated with a history record.
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(
+                avatarUrl: Swift.String? = nil,
+                displayName: Swift.String? = nil,
+                displayNameKey: Swift.String? = nil,
+                id: Swift.String? = nil,
+                _type: Swift.String? = nil,
+                url: Swift.String? = nil,
+                additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()
+            ) {
+                self.avatarUrl = avatarUrl
+                self.displayName = displayName
+                self.displayNameKey = displayNameKey
+                self.id = id
+                self._type = _type
+                self.url = url
+                self.additionalProperties = additionalProperties
+            }
+            public enum CodingKeys: String, CodingKey {
+                case avatarUrl
+                case displayName
+                case displayNameKey
+                case id
+                case _type = "type"
+                case url
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                avatarUrl = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .avatarUrl
+                )
+                displayName = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .displayName
+                )
+                displayNameKey = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .displayNameKey
+                )
+                id = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .id
+                )
+                _type = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: ._type
+                )
+                url = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .url
+                )
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [
+                    "avatarUrl",
+                    "displayName",
+                    "displayNameKey",
+                    "id",
+                    "type",
+                    "url"
+                ])
+            }
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encodeIfPresent(
+                    avatarUrl,
+                    forKey: .avatarUrl
+                )
+                try container.encodeIfPresent(
+                    displayName,
+                    forKey: .displayName
+                )
+                try container.encodeIfPresent(
+                    displayNameKey,
+                    forKey: .displayNameKey
+                )
+                try container.encodeIfPresent(
+                    id,
+                    forKey: .id
+                )
+                try container.encodeIfPresent(
+                    _type,
+                    forKey: ._type
+                )
+                try container.encodeIfPresent(
+                    url,
+                    forKey: .url
+                )
+                try encoder.encodeAdditionalProperties(additionalProperties)
             }
         }
         /// - Remark: Generated from `#/components/schemas/IssueBulkEditField`.
@@ -1964,6 +2946,258 @@ public enum Components {
                 try decoder.ensureNoAdditionalProperties(knownKeys: [])
             }
         }
+        /// Details of an issue transition.
+        ///
+        /// - Remark: Generated from `#/components/schemas/IssueTransition`.
+        public struct IssueTransition: Codable, Hashable, Sendable {
+            /// Expand options that include additional transition details in the response.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/expand`.
+            public var expand: Swift.String?
+            /// Details of the fields associated with the issue transition screen. Use this information to populate `fields` and `update` in a transition request.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/fields`.
+            public struct fieldsPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: Components.Schemas.FieldMetadata]
+                /// Creates a new `fieldsPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: Components.Schemas.FieldMetadata] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// Details of the fields associated with the issue transition screen. Use this information to populate `fields` and `update` in a transition request.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/fields`.
+            public var fields: Components.Schemas.IssueTransition.fieldsPayload?
+            /// Whether there is a screen associated with the issue transition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/hasScreen`.
+            public var hasScreen: Swift.Bool?
+            /// The ID of the issue transition. Required when specifying a transition to undertake.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/id`.
+            public var id: Swift.String?
+            /// Whether the transition is available to be performed.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/isAvailable`.
+            public var isAvailable: Swift.Bool?
+            /// Whether the issue has to meet criteria before the issue transition is applied.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/isConditional`.
+            public var isConditional: Swift.Bool?
+            /// Whether the issue transition is global, that is, the transition is applied to issues regardless of their status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/isGlobal`.
+            public var isGlobal: Swift.Bool?
+            /// Whether this is the initial issue transition for the workflow.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/isInitial`.
+            public var isInitial: Swift.Bool?
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/looped`.
+            public var looped: Swift.Bool?
+            /// The name of the issue transition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/name`.
+            public var name: Swift.String?
+            /// Details of the issue status after the transition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/to`.
+            public struct toPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/IssueTransition/to/value1`.
+                public var value1: Components.Schemas.StatusDetails
+                /// Creates a new `toPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.StatusDetails) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// Details of the issue status after the transition.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueTransition/to`.
+            public var to: Components.Schemas.IssueTransition.toPayload?
+            /// A container of undocumented properties.
+            public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `IssueTransition`.
+            ///
+            /// - Parameters:
+            ///   - expand: Expand options that include additional transition details in the response.
+            ///   - fields: Details of the fields associated with the issue transition screen. Use this information to populate `fields` and `update` in a transition request.
+            ///   - hasScreen: Whether there is a screen associated with the issue transition.
+            ///   - id: The ID of the issue transition. Required when specifying a transition to undertake.
+            ///   - isAvailable: Whether the transition is available to be performed.
+            ///   - isConditional: Whether the issue has to meet criteria before the issue transition is applied.
+            ///   - isGlobal: Whether the issue transition is global, that is, the transition is applied to issues regardless of their status.
+            ///   - isInitial: Whether this is the initial issue transition for the workflow.
+            ///   - looped:
+            ///   - name: The name of the issue transition.
+            ///   - to: Details of the issue status after the transition.
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(
+                expand: Swift.String? = nil,
+                fields: Components.Schemas.IssueTransition.fieldsPayload? = nil,
+                hasScreen: Swift.Bool? = nil,
+                id: Swift.String? = nil,
+                isAvailable: Swift.Bool? = nil,
+                isConditional: Swift.Bool? = nil,
+                isGlobal: Swift.Bool? = nil,
+                isInitial: Swift.Bool? = nil,
+                looped: Swift.Bool? = nil,
+                name: Swift.String? = nil,
+                to: Components.Schemas.IssueTransition.toPayload? = nil,
+                additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()
+            ) {
+                self.expand = expand
+                self.fields = fields
+                self.hasScreen = hasScreen
+                self.id = id
+                self.isAvailable = isAvailable
+                self.isConditional = isConditional
+                self.isGlobal = isGlobal
+                self.isInitial = isInitial
+                self.looped = looped
+                self.name = name
+                self.to = to
+                self.additionalProperties = additionalProperties
+            }
+            public enum CodingKeys: String, CodingKey {
+                case expand
+                case fields
+                case hasScreen
+                case id
+                case isAvailable
+                case isConditional
+                case isGlobal
+                case isInitial
+                case looped
+                case name
+                case to
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                expand = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .expand
+                )
+                fields = try container.decodeIfPresent(
+                    Components.Schemas.IssueTransition.fieldsPayload.self,
+                    forKey: .fields
+                )
+                hasScreen = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .hasScreen
+                )
+                id = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .id
+                )
+                isAvailable = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .isAvailable
+                )
+                isConditional = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .isConditional
+                )
+                isGlobal = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .isGlobal
+                )
+                isInitial = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .isInitial
+                )
+                looped = try container.decodeIfPresent(
+                    Swift.Bool.self,
+                    forKey: .looped
+                )
+                name = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .name
+                )
+                to = try container.decodeIfPresent(
+                    Components.Schemas.IssueTransition.toPayload.self,
+                    forKey: .to
+                )
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [
+                    "expand",
+                    "fields",
+                    "hasScreen",
+                    "id",
+                    "isAvailable",
+                    "isConditional",
+                    "isGlobal",
+                    "isInitial",
+                    "looped",
+                    "name",
+                    "to"
+                ])
+            }
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encodeIfPresent(
+                    expand,
+                    forKey: .expand
+                )
+                try container.encodeIfPresent(
+                    fields,
+                    forKey: .fields
+                )
+                try container.encodeIfPresent(
+                    hasScreen,
+                    forKey: .hasScreen
+                )
+                try container.encodeIfPresent(
+                    id,
+                    forKey: .id
+                )
+                try container.encodeIfPresent(
+                    isAvailable,
+                    forKey: .isAvailable
+                )
+                try container.encodeIfPresent(
+                    isConditional,
+                    forKey: .isConditional
+                )
+                try container.encodeIfPresent(
+                    isGlobal,
+                    forKey: .isGlobal
+                )
+                try container.encodeIfPresent(
+                    isInitial,
+                    forKey: .isInitial
+                )
+                try container.encodeIfPresent(
+                    looped,
+                    forKey: .looped
+                )
+                try container.encodeIfPresent(
+                    name,
+                    forKey: .name
+                )
+                try container.encodeIfPresent(
+                    to,
+                    forKey: .to
+                )
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
         /// Details about an issue type.
         ///
         /// - Remark: Generated from `#/components/schemas/IssueTypeDetails`.
@@ -2130,6 +3364,198 @@ public enum Components {
                     "self",
                     "subtask"
                 ])
+            }
+        }
+        /// Details of an issue update request.
+        ///
+        /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails`.
+        public struct IssueUpdateDetails: Codable, Hashable, Sendable {
+            /// List of issue screen fields to update, specifying the sub-field to update and its value for each field. This field provides a straightforward option when setting a sub-field. When multiple sub-fields or other operations are required, use `update`. Fields included in here cannot be included in `update`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/fields`.
+            public struct fieldsPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: OpenAPIRuntime.OpenAPIValueContainer]
+                /// Creates a new `fieldsPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: OpenAPIRuntime.OpenAPIValueContainer] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// List of issue screen fields to update, specifying the sub-field to update and its value for each field. This field provides a straightforward option when setting a sub-field. When multiple sub-fields or other operations are required, use `update`. Fields included in here cannot be included in `update`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/fields`.
+            public var fields: Components.Schemas.IssueUpdateDetails.fieldsPayload?
+            /// Additional issue history details.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/historyMetadata`.
+            public struct historyMetadataPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/historyMetadata/value1`.
+                public var value1: Components.Schemas.HistoryMetadata
+                /// Creates a new `historyMetadataPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.HistoryMetadata) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// Additional issue history details.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/historyMetadata`.
+            public var historyMetadata: Components.Schemas.IssueUpdateDetails.historyMetadataPayload?
+            /// Details of issue properties to be add or update.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/properties`.
+            public var properties: [Components.Schemas.EntityProperty]?
+            /// Details of a transition. Required when performing a transition, optional when creating or editing an issue.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/transition`.
+            public struct transitionPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/transition/value1`.
+                public var value1: Components.Schemas.IssueTransition
+                /// Creates a new `transitionPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.IssueTransition) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// Details of a transition. Required when performing a transition, optional when creating or editing an issue.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/transition`.
+            public var transition: Components.Schemas.IssueUpdateDetails.transitionPayload?
+            /// A Map containing the field field name and a list of operations to perform on the issue screen field. Note that fields included in here cannot be included in `fields`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/update`.
+            public struct updatePayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: [Components.Schemas.FieldUpdateOperation]]
+                /// Creates a new `updatePayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: [Components.Schemas.FieldUpdateOperation]] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// A Map containing the field field name and a list of operations to perform on the issue screen field. Note that fields included in here cannot be included in `fields`.
+            ///
+            /// - Remark: Generated from `#/components/schemas/IssueUpdateDetails/update`.
+            public var update: Components.Schemas.IssueUpdateDetails.updatePayload?
+            /// A container of undocumented properties.
+            public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `IssueUpdateDetails`.
+            ///
+            /// - Parameters:
+            ///   - fields: List of issue screen fields to update, specifying the sub-field to update and its value for each field. This field provides a straightforward option when setting a sub-field. When multiple sub-fields or other operations are required, use `update`. Fields included in here cannot be included in `update`.
+            ///   - historyMetadata: Additional issue history details.
+            ///   - properties: Details of issue properties to be add or update.
+            ///   - transition: Details of a transition. Required when performing a transition, optional when creating or editing an issue.
+            ///   - update: A Map containing the field field name and a list of operations to perform on the issue screen field. Note that fields included in here cannot be included in `fields`.
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(
+                fields: Components.Schemas.IssueUpdateDetails.fieldsPayload? = nil,
+                historyMetadata: Components.Schemas.IssueUpdateDetails.historyMetadataPayload? = nil,
+                properties: [Components.Schemas.EntityProperty]? = nil,
+                transition: Components.Schemas.IssueUpdateDetails.transitionPayload? = nil,
+                update: Components.Schemas.IssueUpdateDetails.updatePayload? = nil,
+                additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()
+            ) {
+                self.fields = fields
+                self.historyMetadata = historyMetadata
+                self.properties = properties
+                self.transition = transition
+                self.update = update
+                self.additionalProperties = additionalProperties
+            }
+            public enum CodingKeys: String, CodingKey {
+                case fields
+                case historyMetadata
+                case properties
+                case transition
+                case update
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                fields = try container.decodeIfPresent(
+                    Components.Schemas.IssueUpdateDetails.fieldsPayload.self,
+                    forKey: .fields
+                )
+                historyMetadata = try container.decodeIfPresent(
+                    Components.Schemas.IssueUpdateDetails.historyMetadataPayload.self,
+                    forKey: .historyMetadata
+                )
+                properties = try container.decodeIfPresent(
+                    [Components.Schemas.EntityProperty].self,
+                    forKey: .properties
+                )
+                transition = try container.decodeIfPresent(
+                    Components.Schemas.IssueUpdateDetails.transitionPayload.self,
+                    forKey: .transition
+                )
+                update = try container.decodeIfPresent(
+                    Components.Schemas.IssueUpdateDetails.updatePayload.self,
+                    forKey: .update
+                )
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [
+                    "fields",
+                    "historyMetadata",
+                    "properties",
+                    "transition",
+                    "update"
+                ])
+            }
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encodeIfPresent(
+                    fields,
+                    forKey: .fields
+                )
+                try container.encodeIfPresent(
+                    historyMetadata,
+                    forKey: .historyMetadata
+                )
+                try container.encodeIfPresent(
+                    properties,
+                    forKey: .properties
+                )
+                try container.encodeIfPresent(
+                    transition,
+                    forKey: .transition
+                )
+                try container.encodeIfPresent(
+                    update,
+                    forKey: .update
+                )
+                try encoder.encodeAdditionalProperties(additionalProperties)
             }
         }
         /// Lists of JQL reference data.
@@ -4195,6 +5621,122 @@ public enum Components {
                 ])
             }
         }
+        /// The schema of a field.
+        ///
+        /// - Remark: Generated from `#/components/schemas/JsonTypeBean`.
+        public struct JsonTypeBean: Codable, Hashable, Sendable {
+            /// If the field is a custom field, the configuration of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/JsonTypeBean/configuration`.
+            public struct configurationPayload: Codable, Hashable, Sendable {
+                /// A container of undocumented properties.
+                public var additionalProperties: [String: OpenAPIRuntime.OpenAPIValueContainer]
+                /// Creates a new `configurationPayload`.
+                ///
+                /// - Parameters:
+                ///   - additionalProperties: A container of undocumented properties.
+                public init(additionalProperties: [String: OpenAPIRuntime.OpenAPIValueContainer] = .init()) {
+                    self.additionalProperties = additionalProperties
+                }
+                public init(from decoder: any Decoder) throws {
+                    additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [])
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try encoder.encodeAdditionalProperties(additionalProperties)
+                }
+            }
+            /// If the field is a custom field, the configuration of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/JsonTypeBean/configuration`.
+            public var configuration: Components.Schemas.JsonTypeBean.configurationPayload?
+            /// If the field is a custom field, the URI of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/JsonTypeBean/custom`.
+            public var custom: Swift.String?
+            /// If the field is a custom field, the custom ID of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/JsonTypeBean/customId`.
+            public var customId: Swift.Int64?
+            /// When the data type is an array, the name of the field items within the array.
+            ///
+            /// - Remark: Generated from `#/components/schemas/JsonTypeBean/items`.
+            public var items: Swift.String?
+            /// If the field is a system field, the name of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/JsonTypeBean/system`.
+            public var system: Swift.String?
+            /// The data type of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/JsonTypeBean/type`.
+            public var _type: Swift.String
+            /// Creates a new `JsonTypeBean`.
+            ///
+            /// - Parameters:
+            ///   - configuration: If the field is a custom field, the configuration of the field.
+            ///   - custom: If the field is a custom field, the URI of the field.
+            ///   - customId: If the field is a custom field, the custom ID of the field.
+            ///   - items: When the data type is an array, the name of the field items within the array.
+            ///   - system: If the field is a system field, the name of the field.
+            ///   - _type: The data type of the field.
+            public init(
+                configuration: Components.Schemas.JsonTypeBean.configurationPayload? = nil,
+                custom: Swift.String? = nil,
+                customId: Swift.Int64? = nil,
+                items: Swift.String? = nil,
+                system: Swift.String? = nil,
+                _type: Swift.String
+            ) {
+                self.configuration = configuration
+                self.custom = custom
+                self.customId = customId
+                self.items = items
+                self.system = system
+                self._type = _type
+            }
+            public enum CodingKeys: String, CodingKey {
+                case configuration
+                case custom
+                case customId
+                case items
+                case system
+                case _type = "type"
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                configuration = try container.decodeIfPresent(
+                    Components.Schemas.JsonTypeBean.configurationPayload.self,
+                    forKey: .configuration
+                )
+                custom = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .custom
+                )
+                customId = try container.decodeIfPresent(
+                    Swift.Int64.self,
+                    forKey: .customId
+                )
+                items = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .items
+                )
+                system = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .system
+                )
+                _type = try container.decode(
+                    Swift.String.self,
+                    forKey: ._type
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "configuration",
+                    "custom",
+                    "customId",
+                    "items",
+                    "system",
+                    "type"
+                ])
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/ListWrapperCallbackApplicationRole`.
         public struct ListWrapperCallbackApplicationRole: Codable, Hashable, Sendable {
             /// Creates a new `ListWrapperCallbackApplicationRole`.
@@ -4209,6 +5751,55 @@ public enum Components {
             public init() {}
             public init(from decoder: any Decoder) throws {
                 try decoder.ensureNoAdditionalProperties(knownKeys: [])
+            }
+        }
+        /// - Remark: Generated from `#/components/schemas/NestedResponse`.
+        public struct NestedResponse: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/NestedResponse/errorCollection`.
+            public var errorCollection: Components.Schemas.ErrorCollection?
+            /// - Remark: Generated from `#/components/schemas/NestedResponse/status`.
+            public var status: Swift.Int32?
+            /// - Remark: Generated from `#/components/schemas/NestedResponse/warningCollection`.
+            public var warningCollection: Components.Schemas.WarningCollection?
+            /// Creates a new `NestedResponse`.
+            ///
+            /// - Parameters:
+            ///   - errorCollection:
+            ///   - status:
+            ///   - warningCollection:
+            public init(
+                errorCollection: Components.Schemas.ErrorCollection? = nil,
+                status: Swift.Int32? = nil,
+                warningCollection: Components.Schemas.WarningCollection? = nil
+            ) {
+                self.errorCollection = errorCollection
+                self.status = status
+                self.warningCollection = warningCollection
+            }
+            public enum CodingKeys: String, CodingKey {
+                case errorCollection
+                case status
+                case warningCollection
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                errorCollection = try container.decodeIfPresent(
+                    Components.Schemas.ErrorCollection.self,
+                    forKey: .errorCollection
+                )
+                status = try container.decodeIfPresent(
+                    Swift.Int32.self,
+                    forKey: .status
+                )
+                warningCollection = try container.decodeIfPresent(
+                    Components.Schemas.WarningCollection.self,
+                    forKey: .warningCollection
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "errorCollection",
+                    "status",
+                    "warningCollection"
+                ])
             }
         }
         /// The user details.
@@ -7264,6 +8855,304 @@ public enum Components {
                 ])
             }
         }
+        /// A status category.
+        ///
+        /// - Remark: Generated from `#/components/schemas/StatusCategory`.
+        public struct StatusCategory: Codable, Hashable, Sendable {
+            /// The name of the color used to represent the status category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusCategory/colorName`.
+            public var colorName: Swift.String?
+            /// The ID of the status category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusCategory/id`.
+            public var id: Swift.Int64?
+            /// The key of the status category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusCategory/key`.
+            public var key: Swift.String?
+            /// The name of the status category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusCategory/name`.
+            public var name: Swift.String?
+            /// The URL of the status category.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusCategory/self`.
+            public var _self: Swift.String?
+            /// A container of undocumented properties.
+            public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `StatusCategory`.
+            ///
+            /// - Parameters:
+            ///   - colorName: The name of the color used to represent the status category.
+            ///   - id: The ID of the status category.
+            ///   - key: The key of the status category.
+            ///   - name: The name of the status category.
+            ///   - _self: The URL of the status category.
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(
+                colorName: Swift.String? = nil,
+                id: Swift.Int64? = nil,
+                key: Swift.String? = nil,
+                name: Swift.String? = nil,
+                _self: Swift.String? = nil,
+                additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()
+            ) {
+                self.colorName = colorName
+                self.id = id
+                self.key = key
+                self.name = name
+                self._self = _self
+                self.additionalProperties = additionalProperties
+            }
+            public enum CodingKeys: String, CodingKey {
+                case colorName
+                case id
+                case key
+                case name
+                case _self = "self"
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                colorName = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .colorName
+                )
+                id = try container.decodeIfPresent(
+                    Swift.Int64.self,
+                    forKey: .id
+                )
+                key = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .key
+                )
+                name = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .name
+                )
+                _self = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: ._self
+                )
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [
+                    "colorName",
+                    "id",
+                    "key",
+                    "name",
+                    "self"
+                ])
+            }
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encodeIfPresent(
+                    colorName,
+                    forKey: .colorName
+                )
+                try container.encodeIfPresent(
+                    id,
+                    forKey: .id
+                )
+                try container.encodeIfPresent(
+                    key,
+                    forKey: .key
+                )
+                try container.encodeIfPresent(
+                    name,
+                    forKey: .name
+                )
+                try container.encodeIfPresent(
+                    _self,
+                    forKey: ._self
+                )
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
+        /// A status.
+        ///
+        /// - Remark: Generated from `#/components/schemas/StatusDetails`.
+        public struct StatusDetails: Codable, Hashable, Sendable {
+            /// The description of the status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/description`.
+            public var description: Swift.String?
+            /// The URL of the icon used to represent the status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/iconUrl`.
+            public var iconUrl: Swift.String?
+            /// The ID of the status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/id`.
+            public var id: Swift.String?
+            /// The name of the status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/name`.
+            public var name: Swift.String?
+            /// The scope of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/scope`.
+            public struct scopePayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/StatusDetails/scope/value1`.
+                public var value1: Components.Schemas.Scope
+                /// Creates a new `scopePayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.Scope) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// The scope of the field.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/scope`.
+            public var scope: Components.Schemas.StatusDetails.scopePayload?
+            /// The URL of the status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/self`.
+            public var _self: Swift.String?
+            /// The category assigned to the status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/statusCategory`.
+            public struct statusCategoryPayload: Codable, Hashable, Sendable {
+                /// - Remark: Generated from `#/components/schemas/StatusDetails/statusCategory/value1`.
+                public var value1: Components.Schemas.StatusCategory
+                /// Creates a new `statusCategoryPayload`.
+                ///
+                /// - Parameters:
+                ///   - value1:
+                public init(value1: Components.Schemas.StatusCategory) {
+                    self.value1 = value1
+                }
+                public init(from decoder: any Decoder) throws {
+                    value1 = try .init(from: decoder)
+                }
+                public func encode(to encoder: any Encoder) throws {
+                    try value1.encode(to: encoder)
+                }
+            }
+            /// The category assigned to the status.
+            ///
+            /// - Remark: Generated from `#/components/schemas/StatusDetails/statusCategory`.
+            public var statusCategory: Components.Schemas.StatusDetails.statusCategoryPayload?
+            /// A container of undocumented properties.
+            public var additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer
+            /// Creates a new `StatusDetails`.
+            ///
+            /// - Parameters:
+            ///   - description: The description of the status.
+            ///   - iconUrl: The URL of the icon used to represent the status.
+            ///   - id: The ID of the status.
+            ///   - name: The name of the status.
+            ///   - scope: The scope of the field.
+            ///   - _self: The URL of the status.
+            ///   - statusCategory: The category assigned to the status.
+            ///   - additionalProperties: A container of undocumented properties.
+            public init(
+                description: Swift.String? = nil,
+                iconUrl: Swift.String? = nil,
+                id: Swift.String? = nil,
+                name: Swift.String? = nil,
+                scope: Components.Schemas.StatusDetails.scopePayload? = nil,
+                _self: Swift.String? = nil,
+                statusCategory: Components.Schemas.StatusDetails.statusCategoryPayload? = nil,
+                additionalProperties: OpenAPIRuntime.OpenAPIObjectContainer = .init()
+            ) {
+                self.description = description
+                self.iconUrl = iconUrl
+                self.id = id
+                self.name = name
+                self.scope = scope
+                self._self = _self
+                self.statusCategory = statusCategory
+                self.additionalProperties = additionalProperties
+            }
+            public enum CodingKeys: String, CodingKey {
+                case description
+                case iconUrl
+                case id
+                case name
+                case scope
+                case _self = "self"
+                case statusCategory
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                description = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .description
+                )
+                iconUrl = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .iconUrl
+                )
+                id = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .id
+                )
+                name = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: .name
+                )
+                scope = try container.decodeIfPresent(
+                    Components.Schemas.StatusDetails.scopePayload.self,
+                    forKey: .scope
+                )
+                _self = try container.decodeIfPresent(
+                    Swift.String.self,
+                    forKey: ._self
+                )
+                statusCategory = try container.decodeIfPresent(
+                    Components.Schemas.StatusDetails.statusCategoryPayload.self,
+                    forKey: .statusCategory
+                )
+                additionalProperties = try decoder.decodeAdditionalProperties(knownKeys: [
+                    "description",
+                    "iconUrl",
+                    "id",
+                    "name",
+                    "scope",
+                    "self",
+                    "statusCategory"
+                ])
+            }
+            public func encode(to encoder: any Encoder) throws {
+                var container = encoder.container(keyedBy: CodingKeys.self)
+                try container.encodeIfPresent(
+                    description,
+                    forKey: .description
+                )
+                try container.encodeIfPresent(
+                    iconUrl,
+                    forKey: .iconUrl
+                )
+                try container.encodeIfPresent(
+                    id,
+                    forKey: .id
+                )
+                try container.encodeIfPresent(
+                    name,
+                    forKey: .name
+                )
+                try container.encodeIfPresent(
+                    scope,
+                    forKey: .scope
+                )
+                try container.encodeIfPresent(
+                    _self,
+                    forKey: ._self
+                )
+                try container.encodeIfPresent(
+                    statusCategory,
+                    forKey: .statusCategory
+                )
+                try encoder.encodeAdditionalProperties(additionalProperties)
+            }
+        }
         /// - Remark: Generated from `#/components/schemas/SubmittedBulkOperation`.
         public struct SubmittedBulkOperation: Codable, Hashable, Sendable {
             /// - Remark: Generated from `#/components/schemas/SubmittedBulkOperation/taskId`.
@@ -8341,6 +10230,31 @@ public enum Components {
                 try encoder.encodeAdditionalProperties(additionalProperties)
             }
         }
+        /// - Remark: Generated from `#/components/schemas/WarningCollection`.
+        public struct WarningCollection: Codable, Hashable, Sendable {
+            /// - Remark: Generated from `#/components/schemas/WarningCollection/warnings`.
+            public var warnings: [Swift.String]?
+            /// Creates a new `WarningCollection`.
+            ///
+            /// - Parameters:
+            ///   - warnings:
+            public init(warnings: [Swift.String]? = nil) {
+                self.warnings = warnings
+            }
+            public enum CodingKeys: String, CodingKey {
+                case warnings
+            }
+            public init(from decoder: any Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+                warnings = try container.decodeIfPresent(
+                    [Swift.String].self,
+                    forKey: .warnings
+                )
+                try decoder.ensureNoAdditionalProperties(knownKeys: [
+                    "warnings"
+                ])
+            }
+        }
     }
     /// Types generated from the `#/components/parameters` section of the OpenAPI document.
     public enum Parameters {}
@@ -8916,6 +10830,370 @@ public enum Operations {
                     default:
                         try throwUnexpectedResponseStatus(
                             expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            /// Undocumented response.
+            ///
+            /// A response with a code that is not documented in the OpenAPI document.
+            case undocumented(statusCode: Swift.Int, OpenAPIRuntime.UndocumentedPayload)
+        }
+        @frozen public enum AcceptableContentType: AcceptableProtocol {
+            case json
+            case other(Swift.String)
+            public init?(rawValue: Swift.String) {
+                switch rawValue.lowercased() {
+                case "application/json":
+                    self = .json
+                default:
+                    self = .other(rawValue)
+                }
+            }
+            public var rawValue: Swift.String {
+                switch self {
+                case let .other(string):
+                    return string
+                case .json:
+                    return "application/json"
+                }
+            }
+            public static var allCases: [Self] {
+                [
+                    .json
+                ]
+            }
+        }
+    }
+    /// Create issue
+    ///
+    /// Creates an issue or, where the option to create subtasks is enabled in Jira, a subtask. A transition may be applied, to move the issue or subtask to a workflow step other than the default start step, and issue properties set.
+    ///
+    /// The content of the issue or subtask is defined using `update` and `fields`. The fields that can be set in the issue or subtask are determined using the [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get). These are the same fields that appear on the issue's create screen. Note that the `description`, `environment`, and any `textarea` type custom fields (multi-line text fields) take Atlassian Document Format content. Single line custom fields (`textfield`) accept a string and don't handle Atlassian Document Format content.
+    ///
+    /// Creating a subtask differs from creating an issue as follows:
+    ///
+    ///  *  `issueType` must be set to a subtask issue type (use [ Get create issue metadata](#api-rest-api-3-issue-createmeta-get) to find subtask issue types).
+    ///  *  `parent` must contain the ID or key of the parent issue.
+    ///
+    /// In a next-gen project any issue may be made a child providing that the parent and child are members of the same project.
+    ///
+    /// **[Permissions](#permissions) required:** *Browse projects* and *Create issues* [project permissions](https://confluence.atlassian.com/x/yodKLg) for the project in which the issue or subtask is created.
+    ///
+    /// - Remark: HTTP `POST /rest/api/3/issue`.
+    /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)`.
+    public enum createIssue {
+        public static let id: Swift.String = "createIssue"
+        public struct Input: Sendable, Hashable {
+            /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/query`.
+            public struct Query: Sendable, Hashable {
+                /// Whether the project in which the issue is created is added to the user's **Recently viewed** project list, as shown under **Projects** in Jira. When provided, the issue type and request type are added to the user's history for a project. These values are then used to provide defaults on the issue create screen.
+                ///
+                /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/query/updateHistory`.
+                public var updateHistory: Swift.Bool?
+                /// Creates a new `Query`.
+                ///
+                /// - Parameters:
+                ///   - updateHistory: Whether the project in which the issue is created is added to the user's **Recently viewed** project list, as shown under **Projects** in Jira. When provided, the issue type and request type are added to the user's history for a project. These values are then used to provide defaults on the issue create screen.
+                public init(updateHistory: Swift.Bool? = nil) {
+                    self.updateHistory = updateHistory
+                }
+            }
+            public var query: Operations.createIssue.Input.Query
+            /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/header`.
+            public struct Headers: Sendable, Hashable {
+                public var accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createIssue.AcceptableContentType>]
+                /// Creates a new `Headers`.
+                ///
+                /// - Parameters:
+                ///   - accept:
+                public init(accept: [OpenAPIRuntime.AcceptHeaderContentType<Operations.createIssue.AcceptableContentType>] = .defaultValues()) {
+                    self.accept = accept
+                }
+            }
+            public var headers: Operations.createIssue.Input.Headers
+            /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/requestBody`.
+            @frozen public enum Body: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/requestBody/content/application\/json`.
+                case json(Components.Schemas.IssueUpdateDetails)
+            }
+            public var body: Operations.createIssue.Input.Body
+            /// Creates a new `Input`.
+            ///
+            /// - Parameters:
+            ///   - query:
+            ///   - headers:
+            ///   - body:
+            public init(
+                query: Operations.createIssue.Input.Query = .init(),
+                headers: Operations.createIssue.Input.Headers = .init(),
+                body: Operations.createIssue.Input.Body
+            ) {
+                self.query = query
+                self.headers = headers
+                self.body = body
+            }
+        }
+        @frozen public enum Output: Sendable, Hashable {
+            public struct Created: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/201/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/201/content/application\/json`.
+                    case json(Components.Schemas.CreatedIssue)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.CreatedIssue {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createIssue.Output.Created.Body
+                /// Creates a new `Created`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createIssue.Output.Created.Body) {
+                    self.body = body
+                }
+            }
+            /// Returned if the request is successful.
+            ///
+            /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)/responses/201`.
+            ///
+            /// HTTP response code: `201 created`.
+            case created(Operations.createIssue.Output.Created)
+            /// The associated value of the enum case if `self` is `.created`.
+            ///
+            /// - Throws: An error if `self` is not `.created`.
+            /// - SeeAlso: `.created`.
+            public var created: Operations.createIssue.Output.Created {
+                get throws {
+                    switch self {
+                    case let .created(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "created",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct BadRequest: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/400/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/400/content/application\/json`.
+                    case json(Components.Schemas.ErrorCollection)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.ErrorCollection {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createIssue.Output.BadRequest.Body
+                /// Creates a new `BadRequest`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createIssue.Output.BadRequest.Body) {
+                    self.body = body
+                }
+            }
+            /// Returned if the request:
+            ///
+            ///  *  is missing required fields.
+            ///  *  contains invalid field values.
+            ///  *  contains fields that cannot be set for the issue type.
+            ///  *  is by a user who does not have the necessary permission.
+            ///  *  is to create a subtype in a project different that of the parent issue.
+            ///  *  is for a subtask when the option to create subtasks is disabled.
+            ///  *  is invalid for any other reason.
+            ///
+            /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)/responses/400`.
+            ///
+            /// HTTP response code: `400 badRequest`.
+            case badRequest(Operations.createIssue.Output.BadRequest)
+            /// The associated value of the enum case if `self` is `.badRequest`.
+            ///
+            /// - Throws: An error if `self` is not `.badRequest`.
+            /// - SeeAlso: `.badRequest`.
+            public var badRequest: Operations.createIssue.Output.BadRequest {
+                get throws {
+                    switch self {
+                    case let .badRequest(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "badRequest",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Unauthorized: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/401/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/401/content/application\/json`.
+                    case json(Components.Schemas.ErrorCollection)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.ErrorCollection {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createIssue.Output.Unauthorized.Body
+                /// Creates a new `Unauthorized`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createIssue.Output.Unauthorized.Body) {
+                    self.body = body
+                }
+            }
+            /// Returned if the authentication credentials are incorrect or missing.
+            ///
+            /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)/responses/401`.
+            ///
+            /// HTTP response code: `401 unauthorized`.
+            case unauthorized(Operations.createIssue.Output.Unauthorized)
+            /// The associated value of the enum case if `self` is `.unauthorized`.
+            ///
+            /// - Throws: An error if `self` is not `.unauthorized`.
+            /// - SeeAlso: `.unauthorized`.
+            public var unauthorized: Operations.createIssue.Output.Unauthorized {
+                get throws {
+                    switch self {
+                    case let .unauthorized(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unauthorized",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct Forbidden: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/403/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/403/content/application\/json`.
+                    case json(Components.Schemas.ErrorCollection)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.ErrorCollection {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createIssue.Output.Forbidden.Body
+                /// Creates a new `Forbidden`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createIssue.Output.Forbidden.Body) {
+                    self.body = body
+                }
+            }
+            /// Returned if the user does not have the necessary permission.
+            ///
+            /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)/responses/403`.
+            ///
+            /// HTTP response code: `403 forbidden`.
+            case forbidden(Operations.createIssue.Output.Forbidden)
+            /// The associated value of the enum case if `self` is `.forbidden`.
+            ///
+            /// - Throws: An error if `self` is not `.forbidden`.
+            /// - SeeAlso: `.forbidden`.
+            public var forbidden: Operations.createIssue.Output.Forbidden {
+                get throws {
+                    switch self {
+                    case let .forbidden(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "forbidden",
+                            response: self
+                        )
+                    }
+                }
+            }
+            public struct UnprocessableContent: Sendable, Hashable {
+                /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/422/content`.
+                @frozen public enum Body: Sendable, Hashable {
+                    /// - Remark: Generated from `#/paths/rest/api/3/issue/POST/responses/422/content/application\/json`.
+                    case json(Components.Schemas.ErrorCollection)
+                    /// The associated value of the enum case if `self` is `.json`.
+                    ///
+                    /// - Throws: An error if `self` is not `.json`.
+                    /// - SeeAlso: `.json`.
+                    public var json: Components.Schemas.ErrorCollection {
+                        get throws {
+                            switch self {
+                            case let .json(body):
+                                return body
+                            }
+                        }
+                    }
+                }
+                /// Received HTTP response body
+                public var body: Operations.createIssue.Output.UnprocessableContent.Body
+                /// Creates a new `UnprocessableContent`.
+                ///
+                /// - Parameters:
+                ///   - body: Received HTTP response body
+                public init(body: Operations.createIssue.Output.UnprocessableContent.Body) {
+                    self.body = body
+                }
+            }
+            /// Returned if a configuration problem prevents the creation of the issue.
+            ///
+            /// - Remark: Generated from `#/paths//rest/api/3/issue/post(createIssue)/responses/422`.
+            ///
+            /// HTTP response code: `422 unprocessableContent`.
+            case unprocessableContent(Operations.createIssue.Output.UnprocessableContent)
+            /// The associated value of the enum case if `self` is `.unprocessableContent`.
+            ///
+            /// - Throws: An error if `self` is not `.unprocessableContent`.
+            /// - SeeAlso: `.unprocessableContent`.
+            public var unprocessableContent: Operations.createIssue.Output.UnprocessableContent {
+                get throws {
+                    switch self {
+                    case let .unprocessableContent(response):
+                        return response
+                    default:
+                        try throwUnexpectedResponseStatus(
+                            expectedStatus: "unprocessableContent",
                             response: self
                         )
                     }
