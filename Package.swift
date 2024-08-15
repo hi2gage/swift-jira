@@ -14,8 +14,8 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "swift-jira",
-            targets: ["swift-jira"]
+            name: "Jira",
+            targets: ["Jira"]
         ),
     ],
     dependencies: [
@@ -25,7 +25,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "swift-jira",
+            name: "Jira",
             dependencies: [
                 .product(name: "OpenAPIRuntime", package: "swift-openapi-runtime"),
                 .product(name: "OpenAPIURLSession", package: "swift-openapi-urlsession"),
@@ -33,7 +33,7 @@ let package = Package(
         ),
         .testTarget(
             name: "swift-jiraTests",
-            dependencies: ["swift-jira"]
+            dependencies: ["Jira"]
         ),
     ]
 )
