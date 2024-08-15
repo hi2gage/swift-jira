@@ -2,3 +2,19 @@ generate:
   - types
   - client
 accessModifier: public
+filter:
+  paths:
+    - "/rest/api/3/bulk/issues/fields"
+    - "/rest/api/3/user"
+    - "/rest/api/3/project"
+    - "/rest/api/3/priorityscheme"
+    - "/rest/api/3/mypreferences"
+    - "/rest/api/3/jql/autocompletedata"
+#    - "/rest/api/3/application-properties"
+#    - "/rest/api/3/configuration"
+#    - "/rest/api/3/issue"
+#    - "/rest/api/3/issueType"
+#    - "/rest/api/3/worklog"
+#    - "/rest/api/3/search"
+#    - "/rest/api/3/resolution"
+
